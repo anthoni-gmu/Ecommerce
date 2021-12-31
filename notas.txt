@@ -1,0 +1,5 @@
+npm install redux redux-devtools-extension react-redux redux-thunk 
+npm install react-toastify
+react-router-dom
+@headlessui/react
+@heroicons/react
