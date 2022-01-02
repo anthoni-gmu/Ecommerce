@@ -8,17 +8,17 @@ export const signup =(first_name,last_name,email,password, re_password) => async
             'content-type': 'application/json'
         }
 
-    }
+    };
     const body =JSON.stringify({
         first_name,
         last_name,
         email,
         password,
         re_password
-    })
+    });
 
     try{
-        const res = await axios.post('${process.env.REACT_APP_API_URL}/auth/users/',body,config)
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/users/`,body,config)
 
         if (res.status===201){
             dispatch({
@@ -36,4 +36,4 @@ export const signup =(first_name,last_name,email,password, re_password) => async
             type: SIGNUP_FAIL,
         })
     }
-}
+};
