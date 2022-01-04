@@ -10,7 +10,8 @@ import Error404 from './containers/errors/Error404'
 import Activate from './containers/auth/Activate'
 import Signup from './containers/auth/Signup'
 import Login from './containers/auth/Login'
-
+import ResetPassword from './containers/auth/ResetPassword';
+import ResetPasswordConfirm from './containers/auth/ResetPasswordConfirm';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route exact path="/signup" element={<Signup />} ></Route>
           <Route exact path="/login" element={<Login />} ></Route>
           <Route exact path="/activate/:uid/:token" element={<Activate />} ></Route>
+          <Route exact path="/reset_password" element={<ResetPassword />} ></Route>
+          <Route exact path="/password/reset/confirm/:uid/:token" element={<ResetPasswordConfirm />} ></Route>
 
           
 
