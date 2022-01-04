@@ -26,3 +26,7 @@ export const SET_ALERT = 'SET_ALERT';
 export const REMOVE_ALERT = 'REMOVE_ALERT'; 
 
 
+//Categories
+
+export const GET_CATEGORY_SUCCESS = 'GET_CATEGORY_SUCCESS';
+export const GET_CATEGORY_FAIL = 'GET_CATEGORY_FAIL';

@@ -12,7 +12,7 @@ import Signup from './containers/auth/Signup'
 import Login from './containers/auth/Login'
 import ResetPassword from './containers/auth/ResetPassword';
 import ResetPasswordConfirm from './containers/auth/ResetPasswordConfirm';
-
+import Shop from './containers/Shop'
 function App() {
   return (
     <Provider store={store}>
@@ -30,7 +30,8 @@ function App() {
           <Route exact path="/reset_password" element={<ResetPassword />} ></Route>
           <Route exact path="/password/reset/confirm/:uid/:token" element={<ResetPasswordConfirm />} ></Route>
 
-          
+          {/* Shop */}
+          <Route exact path="/shop" element={<Shop />} ></Route>
 
 
 
