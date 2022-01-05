@@ -13,6 +13,9 @@ import Login from './containers/auth/Login'
 import ResetPassword from './containers/auth/ResetPassword';
 import ResetPasswordConfirm from './containers/auth/ResetPasswordConfirm';
 import Shop from './containers/Shop'
+
+import ProductDetail from './containers/pages/ProductDetail';
+
 function App() {
   return (
     <Provider store={store}>
@@ -32,6 +35,8 @@ function App() {
 
           {/* Shop */}
           <Route exact path="/shop" element={<Shop />} ></Route>
+          <Route exact path="/product/:productId" element={<ProductDetail />} ></Route>
+
 
 
 
