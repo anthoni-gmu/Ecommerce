@@ -1,15 +1,15 @@
-import Layout from "../hocs/Layout"
+import Layout from "../../hocs/Layout"
 import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon, FilterIcon, MinusSmIcon, PlusSmIcon, ViewGridIcon } from '@heroicons/react/solid'
-import { prices } from '../helpers/fixedPrices'
+import { prices } from '../../helpers/fixedPrices'
 
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { get_categories } from '../redux/actions/categories'
-import { get_products, get_filtered_products } from '../redux/actions/products'
-import ProductCard from "../components/product/ProductCart"
+import { get_categories } from "../../redux/actions/categories"
+import { get_products, get_filtered_products } from '../../redux/actions/products'
+import ProductCard from "../../components/product/ProductCart"
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
   { name: 'Best Rating', href: '#', current: false },
@@ -59,7 +59,7 @@ const filters = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-const Shop = ({
+const Search = ({
   get_categories,
   categories,
   get_products,
@@ -368,7 +368,7 @@ const Shop = ({
 
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative z-10 flex items-baseline justify-between pt-24 pb-6 border-b border-gray-200">
-              <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Shop</h1>
+              <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Buscaste :</h1>
 
               <div className="flex items-center">
                
@@ -600,4 +600,4 @@ export default connect(mapStateToProps, {
   get_categories,
   get_products,
   get_filtered_products
-})(Shop)
+})(Search)
