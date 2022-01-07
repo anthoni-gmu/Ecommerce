@@ -25,10 +25,10 @@ import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
 import { connect } from 'react-redux'
 import { logout } from '../../redux/actions/auth'
 import { get_categories } from '../../redux/actions/categories'
+import { get_search_products } from '../../redux/actions/products'
 import { Navigate } from 'react-router'
 import { SortAscendingIcon, UsersIcon } from '@heroicons/react/solid'
 import SearchBox from './SearchBox'
-
 
 const solutions = [
   {
@@ -96,15 +96,34 @@ function Navbar({
   isAuthenticated,
   logout,
   get_categories,
-  categories
+  categories,
+  get_search_products
 
 }) {
-
+  const [render,setRender]=useState(false);
   const [redirect, setRedirect] = useState(false);
+  const [formData,setFormData]= useState({
+    category_id:0,
+    search: ''
+  });
+
+  const {category_id,search}= formData;
 
   useEffect(() => {
     get_categories()
   }, [])
+
+  const onChange= e=>setFormData({...formData,[e.target.name]:e.target.value});
+  const onSubmit = e => {
+    e.preventDefault();
+    get_search_products(search,category_id)
+    setRender(!render);
+  }
+
+  if(render){
+    return <Navigate to='/search'/>
+  }
+
 
   const logoutHandler = () => {
     logout();
@@ -314,7 +333,13 @@ function Navbar({
                 <NavLink to="/shop" className="text-base pt-1 font-medium text-gray-500 hover:text-gray-900">
                   Shop
                 </NavLink>
-                <SearchBox categories={categories}/>
+                <SearchBox 
+                search={search}
+                onChange={onChange}
+                onSubmit={onSubmit}
+                categories={categories}
+
+                />
                 
               </Popover.Group>
               <div className="flex items-center md:ml-12">
@@ -438,9 +463,11 @@ const mapStateToProps = state => ({
   isAuthenticated: state.Auth.isAuthenticated,
   user: state.Auth.user,
   categories: state.Categories.categories
+
 })
 
 export default connect(mapStateToProps, {
   logout,
-  get_categories
+  get_categories,
+  get_search_products
 })(Navbar)
