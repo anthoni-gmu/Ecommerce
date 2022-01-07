@@ -66,7 +66,7 @@ class ListProductsView(APIView):
              return Response({'error':'No product to list'},status=status.HTTP_404_NOT_FOUND)
 
 class ListSearchView(APIView):
-    permissions_classes = (permissions.AllowAny)
+    permission_classes =(permissions.AllowAny,)
     def post(self,request,format=None):
         data= self.request.data
 
@@ -79,7 +79,9 @@ class ListSearchView(APIView):
         if len(search)==0:
             search_results=Product.objects.order_by('-date_created').all() 
         else:
-            search_results=Product.objects.filter(Q(description_icontains=search) | Q(name__icontains=search))   
+            search_results = Product.objects.filter(
+                Q(description__icontains=search) | Q(name__icontains=search)
+            )  
         
         if category_id == 0:
             search_results=ProductSerializer(search_results,many=True)
@@ -111,6 +113,7 @@ class ListSearchView(APIView):
                 ),filter(category__in=filtered_categories)
         search_results= ProductSerializer(search_results,many=True)
         return Response({'search_products':search_results.data},status=status.HTTP_200_OK)
+
 
 class ListRelatedView(APIView):
     permission_classes = (permissions.AllowAny, )

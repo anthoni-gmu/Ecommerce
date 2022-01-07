@@ -214,6 +214,7 @@ export const get_search_products = (search, category_id) => async dispatch => {
             });
         }
     } catch (err) {
+        console.log(err)
         dispatch({
             type: SEARCH_PRODUCTS_FAIL
         });

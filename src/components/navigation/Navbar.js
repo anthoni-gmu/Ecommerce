@@ -116,12 +116,14 @@ function Navbar({
   const onChange= e=>setFormData({...formData,[e.target.name]:e.target.value});
   const onSubmit = e => {
     e.preventDefault();
-    get_search_products(search,category_id)
+    console.log(search);
+    console.log(category_id);
+    get_search_products(search, category_id);
     setRender(!render);
   }
 
   if(render){
-    return <Navigate to='/search'/>
+    return <Navigate to='/search' />
   }
 
 
