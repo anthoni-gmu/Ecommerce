@@ -10,18 +10,37 @@ import { StarIcon } from '@heroicons/react/solid'
 import { HeartIcon, MinusSmIcon, PlusSmIcon } from '@heroicons/react/outline'
 
 import { get_product, get_related_products } from "../../redux/actions/products";
+import { get_items, add_item, get_total, get_item_total } from "../../redux/actions/cart";
 import ImageGallery from "../../components/product/ImageGallery";
 
+import Loader from "react-loader-spinner";
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
 const ProductDetail = ({
     get_product,
     get_related_products,
-    product
+    product,
+    get_items,
+    add_item,
+    get_total,
+    get_item_total
 
 }) => {
+
+    const [loading, setLoading]=useState(false);
+
+    const navigate= useNavigate();
+    const addToCart = async () => {
+
+        if (product && product !== null && product !== undefined && product.quantity > 0) {
+            setLoading(true)
+            await add_item(product);
+            await get_items();
+            await get_total();
+            await get_item_total();
+            setLoading(false)
+            navigate('/cart')
+        }
+    }
 
     const params = useParams()
     const productId = params.productId
@@ -58,17 +77,39 @@ const ProductDetail = ({
                                     dangerouslySetInnerHTML={{ __html: product && product.description }}
                                 />
                             </div>
-                            <form className="mt-6">
+                            <div className="mt-6">
                                 {/* Colors */}
-                              
+                                <p className="mt-4">
+                                    {
+                                        product &&
+                                            product !== null &&
+                                            product !== undefined &&
+                                            product.quantity > 0 ? (
+                                            <span className='text-green-500'>
+                                                In Stock
+                                            </span>
+                                        ) : (
+                                            <span className='text-red-500'>
+                                                Out of Stock
+                                            </span>
+                                        )
+                                    }
+                                </p>
 
                                 <div className="mt-10 flex sm:flex-col1">
-                                    <button
-                                        type="submit"
-                                        className="max-w-xs flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500 sm:w-full"
-                                    >
-                                        Add to bag
-                                    </button>
+                                {loading?<button 
+                  className="max-w-xs flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500 sm:w-full">
+                    <Loader
+                    type="Oval"
+                    color="#fff"
+                    width={20}
+                    height={20}/>
+                </button>:
+                <button 
+                onClick={addToCart}
+                className="max-w-xs flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500 sm:w-full">
+                  Agregar al Carrito
+              </button>}
 
                                     <button
                                         type="button"
@@ -78,7 +119,7 @@ const ProductDetail = ({
                                         <span className="sr-only">Add to favorites</span>
                                     </button>
                                 </div>
-                            </form>
+                            </div>
 
                             <section aria-labelledby="details-heading" className="mt-12">
                                 <h2 id="details-heading" className="sr-only">
@@ -101,7 +142,10 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
     get_product,
-    get_related_products
-
+    get_related_products,
+    get_items,
+    add_item,
+    get_total,
+    get_item_total
 
 })(ProductDetail)

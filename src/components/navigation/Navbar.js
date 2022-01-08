@@ -21,7 +21,7 @@ import {
   ViewGridIcon,
   XIcon,
 } from '@heroicons/react/outline'
-import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, SearchIcon, ShoppingCartIcon } from '@heroicons/react/solid'
 import { connect } from 'react-redux'
 import { logout } from '../../redux/actions/auth'
 import { get_categories } from '../../redux/actions/categories'
@@ -250,6 +250,11 @@ function Navbar({
               </Link>
             </div>
             <div className="-mr-2 -my-2 md:hidden">
+            <Link to="/cart" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+              <span className="sr-only">Open menu</span>
+              <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
+              <span className="text-xs absolute top-1 mt-3 ml-4 bg-red-500 text-white font-semibold rounded-full px-2 text-center"></span>
+            </Link>
               <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                 <span className="sr-only">Open menu</span>
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
@@ -345,6 +350,9 @@ function Navbar({
                 
               </Popover.Group>
               <div className="flex items-center md:ml-12">
+              <Link to="/cart">
+                  <ShoppingCartIcon className="h-10 w-10 mr-3 bg-gray-100 p-2 text-gray-300 rounded-full  " />
+                  </Link>
                 {
                   isAuthenticated ? authLinks : guestLinks
                 }
