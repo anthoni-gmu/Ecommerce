@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUse
 
 import os 
 
-
+from apps.cart.models import Cart
 class UserAccountManager(BaseUserManager):
     def create_user(self,email,password=None,**estra_fields):
         if not email:
@@ -15,7 +15,9 @@ class UserAccountManager(BaseUserManager):
 
         user.set_password(password)
         user.save()
-
+        shopping_cart=Cart.objects.create(user=user)
+        shopping_cart.save()
+        
         return user
     
     def create_superuser(self,email,password,**estra_fields):
