@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/product/',include('apps.products.urls')),
     path('api/cart/',include('apps.cart.urls')),
     path('api/shipping/',include('apps.shipping.urls')),
+    path('api/orders/',include('apps.orders.urls')),
 
     path('admin/', admin.site.urls),
    
