@@ -15,6 +15,17 @@ import { Link, Navigate } from "react-router-dom";
 import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
 import {get_shipping_options} from '../../redux/actions/shipping'
 
+import { refresh } from "../../redux/actions/auth";
+
+import {
+    get_payment_total,
+    get_client_token,
+    process_payment
+} from '../../redux/actions/payment';
+import DropIn from 'braintree-web-drop-in-react';
+import Loader from 'react-loader-spinner';
+import {countries} from '../../helpers/fixedCountries'
+import ShippingForm from "../../components/checkout/ShippingForm";
 
 const Checkout = ({
     get_items,
@@ -28,7 +39,21 @@ const Checkout = ({
     remove_item,
     update_item,
     setAlert,
-    get_shipping_options,shipping
+    get_shipping_options,
+    shipping,
+    refresh,
+    get_payment_total,
+    get_client_token,
+    process_payment,
+    user,
+    clientToken,
+    made_payment,
+    loading,
+    original_price,
+    total_amount,
+    total_compare_amount,
+    estimated_tax,
+    shipping_cost,
 }) => {
     const [formData, setFormData] = useState({
       full_name: '',
@@ -253,8 +278,16 @@ const mapStateToProps = state => ({
     amount: state.Cart.amount,
     compare_amount: state.Cart.compare_amount,
     total_items: state.Cart.total_items,
-    shipping: state.Shipping.shipping
-
+    shipping: state.Shipping.shipping,
+    user: state.Auth.user,
+    clientToken: state.Payment.clientToken,
+    made_payment: state.Payment.made_payment,
+    loading: state.Payment.loading,
+    original_price: state.Payment.original_price,
+    total_amount: state.Payment.total_amount,
+    total_compare_amount: state.Payment.total_compare_amount,
+    estimated_tax: state.Payment.estimated_tax,
+    shipping_cost: state.Payment.shipping_cost,
 })
 
 export default connect(mapStateToProps,{
@@ -264,5 +297,9 @@ export default connect(mapStateToProps,{
     remove_item,
     update_item,
     setAlert,
-    get_shipping_options
+    get_shipping_options,
+    refresh,
+    get_payment_total,
+    get_client_token,
+    process_payment,
 }) (Checkout)
