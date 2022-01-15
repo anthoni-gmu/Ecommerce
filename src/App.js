@@ -18,6 +18,7 @@ import ProductDetail from './containers/pages/ProductDetail';
 import Search from './containers/pages/Search';
 import Cart from './containers/pages/Cart';
 import Checkout from './containers/pages/Checkout';
+import TrankYou from './containers/pages/ThankYou';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route exact path="/shop" element={<Shop />} ></Route>
           <Route exact path="/product/:productId" element={<ProductDetail />} ></Route>
           <Route exact path="/search" element={<Search />} ></Route>
+          <Route exact path="/thankyou" element={<TrankYou />} ></Route>
 
 
 
