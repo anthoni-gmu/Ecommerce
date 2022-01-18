@@ -71,6 +71,19 @@ const Checkout = ({
         instance: {}
     });
 
+    const { 
+        full_name,
+        address_line_1,
+        address_line_2,
+        city,
+        state_province_region,
+        postal_zip_code,
+        country_region,
+        telephone_number,
+        coupon_name,
+        shipping_id,
+    } = formData;
+
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const [render, setRender] = useState(false);
@@ -88,7 +101,12 @@ const Checkout = ({
     }, [render])
 
 
-// 12:23 67
+    useEffect(() => {
+        get_client_token();
+    }, [user]);
+    useEffect(() => {
+        get_payment_total(shipping_id,'');
+    }, [shipping_id]);
 
 
 
@@ -240,7 +258,7 @@ const Checkout = ({
                     <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
                   </a>
                 </dt>
-                <dd className="text-sm font-medium text-gray-900">$5.00</dd>
+                <dd className="text-sm font-medium text-gray-900">{shipping && shipping_id !==0 ?<>${shipping_cost}</>:<>(Please select a shipping option)</>}</dd>
               </div>
 
               <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
@@ -251,12 +269,23 @@ const Checkout = ({
                     <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
                   </a>
                 </dt>
-                <dd className="text-sm font-medium text-gray-900">$8.32</dd>
+                <dd className="text-sm font-medium text-gray-900">${estimated_tax}</dd>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
+                <dt className="flex text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <a href="#" className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500">
+                    <span className="sr-only">Learn more about how tax is calculated</span>
+                    <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
+                  </a>
+                </dt>
+                <dd className="text-sm font-medium text-gray-900">${total_compare_amount}</dd>
               </div>
 
               <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
                 <dt className="text-base font-medium text-gray-900">Order total</dt>
-                <dd className="text-base font-medium text-gray-900">${amount.toFixed(2)}</dd>
+                <dd className="text-base font-medium text-gray-900">${total_amount}</dd>
               </div>
             </dl>
 
