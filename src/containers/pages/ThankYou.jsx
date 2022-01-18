@@ -1,10 +1,16 @@
 import Layout from '../../hocs/Layout'
 import { connect } from 'react-redux'
 import { Navigate } from 'react-router-dom';
+import { reset } from '../../redux/actions/payment';
+import { useEffect } from 'react';
 
 const TrankYou = ({
     isAuthenticated
 }) => {
+    useEffect(() => {
+        reset()
+    }, [])
+
     if(!isAuthenticated)
         return <Navigate to='/' />;
     return (

@@ -1,5 +1,5 @@
 import Layout from "../../hocs/Layout"
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux"
 import { setAlert } from "../../redux/actions/alert";
 import {
@@ -12,8 +12,7 @@ import {
 
 import CartItem from "../../components/cart/CartItem";
 import { Link, Navigate } from "react-router-dom";
-import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
-import {get_shipping_options} from '../../redux/actions/shipping'
+import { get_shipping_options } from '../../redux/actions/shipping'
 
 import { refresh } from "../../redux/actions/auth";
 
@@ -24,7 +23,7 @@ import {
 } from '../../redux/actions/payment';
 import DropIn from 'braintree-web-drop-in-react';
 import Loader from 'react-loader-spinner';
-import {countries} from '../../helpers/fixedCountries'
+import { countries } from '../../helpers/fixedCountries'
 import ShippingForm from "../../components/checkout/ShippingForm";
 
 const Checkout = ({
@@ -56,22 +55,21 @@ const Checkout = ({
     shipping_cost,
 }) => {
     const [formData, setFormData] = useState({
-      full_name: '',
-      address_line_1: '',
-      address_line_2: '',
-      city: '',
-      state_province_region: '',
-      postal_zip_code: '',
-      country_region: 'Peru',
-      telephone_number: '',
-      coupon_name: '',
-      shipping_id: 0,
+        full_name: '',
+        address_line_1: '',
+        address_line_2: '',
+        city: '',
+        state_province_region: '',
+        postal_zip_code: '',
+        country_region: 'Peru',
+        telephone_number: '',
+        shipping_id: 0,
     });
     const [data, setData] = useState({
         instance: {}
     });
 
-    const { 
+    const {
         full_name,
         address_line_1,
         address_line_2,
@@ -80,16 +78,35 @@ const Checkout = ({
         postal_zip_code,
         country_region,
         telephone_number,
-        coupon_name,
         shipping_id,
     } = formData;
+
+    const buy = async e => {
+        e.preventDefault();
+        let nonce = await data.instance.requestPaymentMethod();
+        
+          process_payment(
+              nonce,
+              shipping_id,
+              '',
+              full_name,
+              address_line_1,
+              address_line_2,
+              city,
+              state_province_region,
+              postal_zip_code,
+              country_region,
+              telephone_number
+          );
+        
+    }
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const [render, setRender] = useState(false);
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0, 0)
         get_shipping_options()
     }, [])
 
@@ -105,27 +122,27 @@ const Checkout = ({
         get_client_token();
     }, [user]);
     useEffect(() => {
-        get_payment_total(shipping_id,'');
+        get_payment_total(shipping_id, '');
     }, [shipping_id]);
 
 
 
 
-    if(!isAuthenticated)
+    if (!isAuthenticated)
         return <Navigate to='/' />;
     const showItems = () => {
-        return(
+        return (
             <div>
                 {
-                    items && 
-                    items !== null && 
-                    items !== undefined && 
-                    items.length !== 0 && 
-                    items.map((item, index)=>{
+                    items &&
+                    items !== null &&
+                    items !== undefined &&
+                    items.length !== 0 &&
+                    items.map((item, index) => {
                         let count = item.count;
                         return (
                             <div key={index}>
-                                <CartItem 
+                                <CartItem
                                     item={item}
                                     count={count}
                                     update_item={update_item}
@@ -142,162 +159,141 @@ const Checkout = ({
         )
     }
 
-    
 
-    const checkoutButton = () => {
-        if (total_items < 1) {
-            return(
-                <>
-                <Link
-                to='/shop'
-                
-            >
-                <button
-                className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-            >
-                Buscar items
-                </button>
-            </Link>
-            </>
-            )
-        } else if (!isAuthenticated) {
-            return(<>
-            <Link
-                to='/login'
-                
-            >
-                <button
-                className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-            >
-                Login
-                </button>
-            </Link>
-            </>)
-            
-        } else {
-            return(
-                <>
-                <Link
-                to='/checkout'>
-                 <button
-                className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-            >
-                Checkout
-                </button>
-            </Link>
-                </>
-            )
-           
-        }
-    }
+
+  
 
     const renderShipping = () => {
-      if (shipping && shipping !== null && shipping !== undefined) {
+        if (shipping && shipping !== null && shipping !== undefined) {
+            return (
+                <div className='mb-5'>
+                    {
+                        shipping.map((shipping_option, index) => (
+                            <div key={index}>
+                                <input
+                                    onChange={e => onChange(e)}
+                                    value={shipping_option.id}
+                                    name='shipping_id'
+                                    type='radio'
+                                    required
+                                />
+                                <label className='ml-4'>
+                                    {shipping_option.name} - ${shipping_option.price} ({shipping_option.time_to_delivery})
+                                </label>
+                            </div>
+                        ))
+                    }
+                </div>
+            );
+        }
+    };
+    const renderPaymentInfo = () => {
+        if (!clientToken) {
+          if (!isAuthenticated) {
+              <Link
+                to="/login"
+                className="w-full bg-gray-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-gray-500"
+              >
+                Login
+              </Link>
+          } else {
+            <button
+              className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+            >
+              <Loader
+                type='Oval'
+                color='#fff'
+                height={20}
+                widht={20}
+              />
+            </button>
+          }
+        } else {
           return (
-              <div className='mb-5'>
-                  {
-                      shipping.map((shipping_option, index) => (
-                          <div key={index}>
-                              <input
-                                  onChange={e => onChange(e)}
-                                  value={shipping_option.id}
-                                  name='shipping_id'
-                                  type='radio'
-                                  required
-                              />
-                              <label className='ml-4'>
-                                  {shipping_option.name} - ${shipping_option.price} ({shipping_option.time_to_delivery})
-                              </label>
-                          </div>
-                      ))
-                  }
+            <>
+              <DropIn
+                options={{
+                    authorization: clientToken,
+                    paypal: {
+                        flow: 'vault'
+                    }
+                }}
+                onInstance={instance => (data.instance = instance)}
+              />
+              <div className="mt-6">
+                {loading?<button
+                  className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+                >
+                  <Loader
+                    type='Oval'
+                    color='#fff'
+                    height={20}
+                    widht={20}
+                  />
+                </button>:
+                <button
+                type="submit"
+                className="w-full bg-green-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-green-500"
+              >
+                Place Order
+              </button>}
               </div>
-          );
+            </>
+          )
+        }
       }
-  };
+      if (made_payment)
+        return <Navigate to='/thankyou' />;
+
 
     return (
         <Layout>
             <div className="bg-white">
-      <div className="max-w-2xl mx-auto pt-16 pb-24 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">Shopping Cart Items ({total_items})</h1>
-        <div className="mt-12 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
-          <section aria-labelledby="cart-heading" className="lg:col-span-7">
-            <h2 id="cart-heading" className="sr-only">
-              Items in your shopping cart
-            </h2>
+                <div className="max-w-2xl mx-auto pt-16 pb-24 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">Shopping Cart Items ({total_items})</h1>
+                    <div className="mt-12 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
+                        <section aria-labelledby="cart-heading" className="lg:col-span-7">
+                            <h2 id="cart-heading" className="sr-only">
+                                Items in your shopping cart
+                            </h2>
 
-            <ul className="border-t border-b border-gray-200 divide-y divide-gray-200">
-              {showItems()}
-            </ul>
-          </section>
+                            <ul className="border-t border-b border-gray-200 divide-y divide-gray-200">
+                                {showItems()}
+                            </ul>
+                        </section>
 
-          {/* Order summary */}
-          <section
-            aria-labelledby="summary-heading"
-            className="mt-16 bg-gray-50 rounded-lg px-4 py-6 sm:p-6 lg:p-8 lg:mt-0 lg:col-span-5"
-          >
-            <h2 id="summary-heading" className="text-lg font-medium text-gray-900">
-              Order summary
-            </h2>
+                        {/* Order summary */}
 
-            {renderShipping()}
+                        <ShippingForm
+                            full_name={full_name}
+                            address_line_1={address_line_1}
+                            address_line_2={address_line_2}
+                            city={city}
+                            state_province_region={state_province_region}
+                            postal_zip_code={postal_zip_code}
+                            telephone_number={telephone_number}
+                            countries={countries}
+                            onChange={onChange}
+                            user={user}
+                            renderShipping={renderShipping}
+                            total_amount={total_amount}
+                            total_compare_amount={total_compare_amount}
+                            estimated_tax={estimated_tax}
+                            shipping_cost={shipping_cost}
+                            shipping_id={shipping_id}
+                            shipping={shipping}
+                            buy={buy}
+                            renderPaymentInfo={renderPaymentInfo}
 
-            <dl className="mt-6 space-y-4">
 
-              <div className="flex items-center justify-between">
-                <dt className="text-sm text-gray-600">Subtotal</dt>
-                <dd className="text-sm font-medium text-gray-900">${compare_amount.toFixed(2)}</dd>
-              </div>
+                        />
+                        
+                        
+                    </div>
 
-              <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                <dt className="flex items-center text-sm text-gray-600">
-                  <span>Shipping estimate</span>
-                  <a href="#" className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">Learn more about how shipping is calculated</span>
-                    <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
-                  </a>
-                </dt>
-                <dd className="text-sm font-medium text-gray-900">{shipping && shipping_id !==0 ?<>${shipping_cost}</>:<>(Please select a shipping option)</>}</dd>
-              </div>
 
-              <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                <dt className="flex text-sm text-gray-600">
-                  <span>Tax estimate</span>
-                  <a href="#" className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">Learn more about how tax is calculated</span>
-                    <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
-                  </a>
-                </dt>
-                <dd className="text-sm font-medium text-gray-900">${estimated_tax}</dd>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                <dt className="flex text-sm text-gray-600">
-                  <span>Subtotal</span>
-                  <a href="#" className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">Learn more about how tax is calculated</span>
-                    <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
-                  </a>
-                </dt>
-                <dd className="text-sm font-medium text-gray-900">${total_compare_amount}</dd>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                <dt className="text-base font-medium text-gray-900">Order total</dt>
-                <dd className="text-base font-medium text-gray-900">${total_amount}</dd>
-              </div>
-            </dl>
-
-            <div className="mt-6">
-              {checkoutButton()}
+                </div>
             </div>
-          </section>
-        </div>
-        
-
-      </div>
-    </div>
         </Layout>
     )
 }
@@ -319,7 +315,7 @@ const mapStateToProps = state => ({
     shipping_cost: state.Payment.shipping_cost,
 })
 
-export default connect(mapStateToProps,{
+export default connect(mapStateToProps, {
     get_items,
     get_total,
     get_item_total,
@@ -331,4 +327,4 @@ export default connect(mapStateToProps,{
     get_payment_total,
     get_client_token,
     process_payment,
-}) (Checkout)
+})(Checkout)

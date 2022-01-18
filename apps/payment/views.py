@@ -121,6 +121,7 @@ class ProcessPaymentView(APIView):
         user = self.request.user
         data = self.request.data
 
+        print(data)
         tax = 0.18
 
         nonce = data['nonce']
