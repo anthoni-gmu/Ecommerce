@@ -9,31 +9,32 @@ from apps.products.serializer import ProductSerializer
 
 
 class GetItemsView(APIView):
-    def get(self,request,format=None):
-        user=self.request.user
+    def get(self, request, format=None):
+        user = self.request.user
         try:
-            cart=Cart.objects.get(user=user)
-            cart_items= CartItem.objects.order_by('product').filter(cart=cart)
+            cart = Cart.objects.get(user=user)
+            cart_items = CartItem.objects.order_by('product').filter(cart=cart)
 
-            result=[]
+            result = []
 
             if CartItem.objects.filter(cart=cart).exists():
                 for cart_item in cart_items:
-                    item={}
+                    item = {}
+
                     item['id'] = cart_item.id
                     item['count'] = cart_item.count
                     product = Product.objects.get(id=cart_item.product.id)
-                    product = ProductSerializer(product) 
+                    product = ProductSerializer(product)
 
-                    item['product']=product.data
-                    
+                    item['product'] = product.data
+
                     result.append(item)
-                return Response({'cart':result},status=status.HTTP_200_OK)
+            return Response({'cart': result}, status=status.HTTP_200_OK)
         except:
             return Response(
-                {'error':'Something went wrong whwn retrieving cart items'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+                {'error': 'Something went wrong when retrieving cart items'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class AddItemView(APIView):
     def post(self,request,format=None):

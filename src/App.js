@@ -20,6 +20,8 @@ import Cart from './containers/pages/Cart';
 import Checkout from './containers/pages/Checkout';
 import TrankYou from './containers/pages/ThankYou';
 import Dashboard from './containers/pages/Dashboard.jsx';
+import DashboardPayments from './containers/pages/DashboardPayments';
+import DashboardPaymentDetail from './containers/pages/DashboardPaymentDetail';
 
 function App() {
   return (
@@ -47,6 +49,8 @@ function App() {
           <Route exact path="/search" element={<Search />} ></Route>
           <Route exact path="/thankyou" element={<TrankYou />} ></Route>
           <Route exact path="/dashboard" element={<Dashboard />} ></Route>
+          <Route exact path='/dashboard/payments' element={<DashboardPayments/>}/>
+          <Route exact path='/dashboard/payment/:transaction_id' element={<DashboardPaymentDetail/>}/>
 
 
 
